@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 /* MODEL PARAMETERS */
 #define SIZE_0 1000 // size of the outer array
@@ -17,6 +18,10 @@ typedef struct Cell {
     state st;
     bool isVaccinated;
 } cell;
+
+/* Stats */
+long numVaccinated = 0;
+long numInfected = 0;
 
 /**
 * Generate a random number in the [0, 1] interval.
@@ -57,9 +62,6 @@ void grid_init(cell **grid) {
     double prob_vaccinated = PERCENT_VACCINATED / ((double) 100);
     double prob_infected = ((double) INIT_NUM_INFECTIONS) / ((double) (((long) SIZE_0) * ((long) SIZE_1)));
 
-    long vaccinatedCount = 0;
-    long infectedCount = 0;
-
     for (int i = 0; i < SIZE_0; i++) {
         for (int j = 0; j < SIZE_1; j++) {
             grid[i][j].st = UNINFECTED;
@@ -67,18 +69,15 @@ void grid_init(cell **grid) {
 
             if (rnd() <= prob_infected) {
                 grid[i][j].st = INFECTED;
-                vaccinatedCount++;
+                numInfected++;
             }
 
             if (rnd() <= prob_vaccinated) {
                 grid[i][j].isVaccinated = true;
-                infectedCount++;
+                numVaccinated++;
             }
         }
     }
-
-    printf("Vaccinated: %ld\n", vaccinatedCount);
-    printf("Infected: %ld\n", infectedCount);
 }
 
 /**
@@ -90,7 +89,39 @@ void grid_free(cell** grid) {
     }
 
     free(grid);
-} 
+}
+
+/**
+* Replace the old grid with the newly copmuted grid.
+*/
+void grid_save(cell **old, cell **new) {
+    for (int i = 0; i < SIZE_0; i++) {
+        old[i] = memcpy(old[i], new[i], SIZE_1*sizeof(cell));
+    }
+}
+
+/**
+* Reset the global statistics counters before the next iteration.
+*/
+void reset_stats() {
+    numVaccinated = 0;
+    numInfected = 0;
+}
+
+/**
+* Print out the statistics in the .csv format using ',' as a separator.
+* If called for the first time it also prints the header.
+*/
+void print_stats() {
+    bool static headerPrinted = false;
+
+    if (!headerPrinted) {
+        printf("vaccinated,infected\n");
+        headerPrinted = true;
+    }
+
+    printf("%ld,%ld\n", numVaccinated, numInfected);
+}
 
 int main (int argc, char **argv) {    
     cell **grid_old, **grid_new;
@@ -98,7 +129,11 @@ int main (int argc, char **argv) {
     grid_old = grid_create();
     grid_new = grid_create();
 
-    grid_init(grid_old);
+    grid_init(grid_new);
+    grid_save(grid_old, grid_new);
+
+    print_stats();
+    reset_stats();
 
     grid_free(grid_old);
     grid_free(grid_new);
