@@ -13,9 +13,9 @@
 
 // Model paramters
 #define LAMBDA 2300 // new births and residents per unit of time
-#define BETA 0.000000000858   // transmisson rate / N
-#define ALPHA 0.000000000343  // vaccination rate
-#define MU 30000    // natural death rate
+#define BETA 0.00000000858   // transmisson rate
+#define ALPHA 0.000035  // vaccination rate
+#define MU 0.0003    // natural death rate
 #define GAMMA 5.5   // incubation period
 #define SIGMA 0.05  // vaccine inefficacy
 #define DELTA 3.8   // infection time
