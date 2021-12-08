@@ -13,9 +13,9 @@
 
 // Model paramters
 #define LAMBDA 2300 // new births and residents per unit of time
-#define BETA 0.00000000858   // transmisson rate
-#define ALPHA 0.000035  // vaccination rate
-#define MU 0.0003    // natural death rate
+#define BETA 0.00000000858  // transmisson rate
+#define ALPHA 0.00035  // vaccination rate
+#define MU 0.00003    // natural death rate
 #define GAMMA 5.5   // incubation period
 #define SIGMA 0.05  // vaccine inefficacy
 #define DELTA 3.8   // infection time
@@ -23,7 +23,7 @@
 #define THETA 10    // average days until recovery
 #define RHO 15      // average days until death
 
-#define MAX_TIME 1.80 // in days
+#define MAX_TIME 180
 
 // Model
 struct SEIR {
@@ -63,11 +63,9 @@ Sampler S(Sample, 0.01);        // Output step
 int main() {
     double maxtime = MAX_TIME;
     SetOutput("seir.csv");    // Redirect output to file
-    Print("time,s,e,i,q,r,d,v\n");
+    Print("time,susceptible,exposed,infectious,quarantined,recovered,dead,vaccinated\n");
     Init(0, maxtime);           // Initialize simulator
-    
     SetAccuracy(1e-8);          // Required accuracy
     Run();                      // Simulate
-    SIMLIB_statistics.Output(); // Print simulation run statistics
     return 0;
 }
