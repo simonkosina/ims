@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 
+
 /* MODEL PARAMETERS */
 #define SIZE_0 1000 // size of the outer array
 #define SIZE_1 10000 // size of the inner array
@@ -11,7 +12,11 @@
 
 /* CONSTANTS */
 #define NUM_NEIGHBORS 12 // number of neighbors in the Von Neumann neighborhood
+#define DIMENSIONS 2 // 2d grid
 
+/* PERIODIC BOUNDARY CONDITIONS */
+#define BOUNDARY_0(x) (x < 0 ? SIZE_0 + x : x % SIZE_0)
+#define BOUNDARY_1(y) (y < 0 ? SIZE_1 + y : y % SIZE_1)
 
 typedef enum State {
     UNINFECTED,
@@ -147,58 +152,43 @@ void stats_print() {
 * with Manhattan distance of 2 and periodic boundary conditions.
 * https://en.wikipedia.org/wiki/Von_Neumann_neighborhood
 */
-void cell_neighbors(int i, int j, int **neighbors) {
+void cell_neighbors(int i, int j, int neighbors[NUM_NEIGHBORS][DIMENSIONS]) {
     // set the indices
-    neighbors[0][0] = i + 1;
+    neighbors[0][0] = BOUNDARY_0(i + 1);
     neighbors[0][1] = j;
     
-    neighbors[1][0] = i - 1;
+    neighbors[1][0] = BOUNDARY_0(i - 1);
     neighbors[1][1] = j;
     
     neighbors[2][0] = i;
-    neighbors[2][1] = j + 1;
+    neighbors[2][1] = BOUNDARY_1(j + 1);
     
     neighbors[3][0] = i;
-    neighbors[3][1] = j - 1;
+    neighbors[3][1] = BOUNDARY_1(j - 1);
     
-    neighbors[4][0] = i + 1;
-    neighbors[4][1] = j + 1;
+    neighbors[4][0] = BOUNDARY_0(i + 1);
+    neighbors[4][1] = BOUNDARY_1(j + 1);
     
-    neighbors[5][0] = i + 1;
-    neighbors[5][1] = j - 1;
+    neighbors[5][0] = BOUNDARY_0(i + 1);
+    neighbors[5][1] = BOUNDARY_1(j - 1);
     
-    neighbors[6][0] = i - 1;
-    neighbors[6][1] = j + 1;
+    neighbors[6][0] = BOUNDARY_0(i - 1);
+    neighbors[6][1] = BOUNDARY_1(j + 1);
     
-    neighbors[7][0] = i - 1;
-    neighbors[7][1] = j - 1;
+    neighbors[7][0] = BOUNDARY_0(i - 1);
+    neighbors[7][1] = BOUNDARY_1(j - 1);
     
-    neighbors[8][0] = i + 2;
+    neighbors[8][0] = BOUNDARY_0(i + 2);
     neighbors[8][1] = j;
     
-    neighbors[9][0] = i - 2;
+    neighbors[9][0] = BOUNDARY_0(i - 2);
     neighbors[9][1] = j;
     
     neighbors[10][0] = i;
-    neighbors[10][1] = j + 2;
+    neighbors[10][1] = BOUNDARY_1(j + 2);
     
     neighbors[11][0] = i;
-    neighbors[11][1] = j - 2;
-
-    // apply periodic boundary conditions
-    for (int i = 0; i < NUM_NEIGHBORS; i++) {
-        if (neighbors[i][0] < 0) {
-            neighbors[i][0] = SIZE_0 + neighbors[i][0];
-        } else {
-            neighbors[i][0] = neighbors[i][0] % SIZE_0;
-        }
-
-        if (neighbors[i][1] < 0) {
-            neighbors[i][1] = SIZE_1 + neighbors[i][1];
-        } else {
-            neighbors[i][1] = neighbors[i][1] % SIZE_1;
-        }
-    }
+    neighbors[11][1] = BOUNDARY_1(j - 2);
 }
 
 
@@ -207,25 +197,33 @@ void cell_neighbors(int i, int j, int **neighbors) {
 * cells in the neighborhood.
 */
 void cell_step(int i, int j) {    
-    int* neighbors[NUM_NEIGHBORS];
+    int neighbors[NUM_NEIGHBORS][DIMENSIONS];
+
+    cell_neighbors(i, j, neighbors);
 
     for (int i = 0; i < NUM_NEIGHBORS; i++) {
-        neighbors[i] = malloc(2*sizeof(int));
+        // printf("%d:\n", i);
+        // printf("\t%d:\n", neighbors[i][0]);
+        // printf("\t%d:\n", neighbors[i][1]);
+    }
+}
 
-        if (neighbors[i] == NULL) {
-            return; // FIXME: error what to do?
+
+/**
+* Compute a step for every cell in the grid.
+*/
+void grid_step() {
+
+    for (int i = 0; i < SIZE_0; i++) {
+        for (int j = 0; j < SIZE_1; j++) {
+            cell_step(i,j);
         }
     }
 
-    cell_neighbors(i, j, (int **) neighbors);
-
-    for (int i = 0; i < NUM_NEIGHBORS; i++) {
-        printf("%d:\n", i);
-        printf("\t%d:\n", neighbors[i][0]);
-        printf("\t%d:\n", neighbors[i][1]);
-    }
-
-    // TODO: Free neighbors!
+    grid_save(grid_old, grid_new);
+    
+    stats_print();
+    stats_reset();
 }
 
 
@@ -239,7 +237,9 @@ int main (int argc, char **argv) {
     stats_print();
     stats_reset();
 
-    cell_step(0,0);
+    for (int i = 0; i < 10; i++) {
+        grid_step();
+    }
 
     grid_free(grid_old);
     grid_free(grid_new);
