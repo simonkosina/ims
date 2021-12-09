@@ -23,7 +23,7 @@
 #define THETA 10    // average days until recovery
 #define RHO 15      // average days until death
 
-#define MAX_TIME 180
+#define MAX_TIME 1000
 
 // Model
 struct SEIR {
@@ -44,8 +44,8 @@ struct SEIR {
     ) :
         S(lambda - beta*S*I - alpha*S - mu*S, S_INIT),
         E(beta*S*I - gamma*E + sigma*beta*V*I - mu*E, E_INIT),
-        I(gamma*E - sigma*I - mu*I, I_INIT),
-        Q(sigma*I - (1 - kappa)*theta*Q - kappa*rho*Q - mu*Q, Q_INIT),
+        I(gamma*E - delta*I - mu*I, I_INIT),
+        Q(delta*I - (1 - kappa)*theta*Q - kappa*rho*Q - mu*Q, Q_INIT),
         R((1 - kappa)*theta*Q - mu*R, R_INIT),
         D(kappa*rho*Q, D_INIT),
         V(alpha*S - sigma*beta*V*I - mu*V, V_INIT) {}
