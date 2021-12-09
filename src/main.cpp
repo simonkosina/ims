@@ -3,13 +3,13 @@
 #include <simlib.h>
 
 // Initial values
-#define S_INIT 34217992    // susceptible
-#define E_INIT 3    // exposed (infected, but not yet infectious)
-#define I_INIT 3    // infectious
-#define Q_INIT 1    // quarantined
-#define R_INIT 0    // recovered
-#define D_INIT 0    // dead
-#define V_INIT 0    // vaccinated
+#define S0 34217993    // susceptible
+#define E0 3    // exposed (infected, but not yet infectious)
+#define I0 3    // infectious
+#define Q0 1    // quarantined
+#define R0 0    // recovered
+#define D0 0    // dead
+#define V0 0    // vaccinated
 
 // Model paramters
 #define LAMBDA 2300 // new births and residents per unit of time
@@ -23,7 +23,7 @@
 #define THETA 10    // average days until recovery
 #define RHO 15      // average days until death
 
-#define MAX_TIME 1000
+#define MAX_TIME 200
 
 // Model
 struct SEIR {
@@ -42,17 +42,17 @@ struct SEIR {
         double theta,
         double rho
     ) :
-        S(lambda - beta*S*I - alpha*S - mu*S, S_INIT),
-        E(beta*S*I - gamma*E + sigma*beta*V*I - mu*E, E_INIT),
-        I(gamma*E - delta*I - mu*I, I_INIT),
-        Q(delta*I - (1 - kappa)*theta*Q - kappa*rho*Q - mu*Q, Q_INIT),
-        R((1 - kappa)*theta*Q - mu*R, R_INIT),
-        D(kappa*rho*Q, D_INIT),
-        V(alpha*S - sigma*beta*V*I - mu*V, V_INIT) {}
+        S(lambda - beta*S*I - alpha*S - mu*S, S0),
+        E(beta*S*I - gamma*E + sigma*beta*V*I - mu*E, E0),
+        I(gamma*E - delta*I - mu*I, I0),
+        Q(delta*I - (1 - kappa)*theta*Q - kappa*rho*Q - mu*Q, Q0),
+        R((1 - kappa)*theta*Q - mu*R, R0),
+        D(kappa*rho*Q, D0),
+        V(alpha*S - sigma*beta*V*I - mu*V, V0) {}
 };
 
 // Create model instance
-SEIR seir(LAMBDA, BETA, ALPHA, MU, GAMMA, SIGMA, DELTA, KAPPA, THETA, RHO);
+SEIR seir(LAMBDA, BETA, ALPHA, MU, 1 / (double) GAMMA, SIGMA, 1 / (double) DELTA, KAPPA, 1 / (double) THETA, 1 / (double) RHO);
 
 void Sample() {
     Print("%6.2f,%.5g,%.5g,%.5g,%.5g,%.5g,%.5g,%.5g\n", T.Value(), seir.S.Value(), seir.E.Value(), seir.I.Value(), seir.Q.Value(), seir.R.Value(), seir.D.Value(), seir.V.Value());
