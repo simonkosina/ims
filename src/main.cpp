@@ -52,7 +52,7 @@ struct SEIR {
 };
 
 // Create model instance
-SEIR seir(LAMBDA, BETA, ALPHA, MU, 1 / (double) GAMMA, SIGMA, 1 / (double) DELTA, KAPPA, 1 / (double) THETA, 1 / (double) RHO);
+SEIR seir(LAMBDA, BETA, ALPHA, MU, (1 / (double) GAMMA), SIGMA, (1 / (double) DELTA), KAPPA, (1 / (double) THETA), (1 / (double) RHO));
 
 void Sample() {
     Print("%6.2f,%.5g,%.5g,%.5g,%.5g,%.5g,%.5g,%.5g\n", T.Value(), seir.S.Value(), seir.E.Value(), seir.I.Value(), seir.Q.Value(), seir.R.Value(), seir.D.Value(), seir.V.Value());
