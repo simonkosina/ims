@@ -3,24 +3,26 @@
 #include <simlib.h>
 
 // Initial values
-#define S0 34217993    // susceptible
+#define V_RATE 0.5
+
+#define S0 ((1-V_RATE)*10450000)    // susceptible
 #define E0 3    // exposed (infected, but not yet infectious)
 #define I0 3    // infectious
 #define Q0 1    // quarantined
 #define R0 0    // recovered
 #define D0 0    // dead
-#define V0 (0.6*S0)    // vaccinated
+#define V0 (V_RATE*S0)   // vaccinated
 
 // Model paramters
-#define LAMBDA 2300 // new births and residents per unit of time
-#define BETA 0.000000073  // transmisson rate
-#define ALPHA 0.0  // vaccination rate
-#define MU 0.00003    // natural death rate
+#define LAMBDA 453 // new births and residents per unit of time
+#define BETA 0.0000000858 // transmisson rate
+#define ALPHA 0.00066  // vaccination rate
+#define MU 0.0000356    // natural death rate
 #define GAMMA (1.0/5.5)   // incubation period
 #define SIGMA 0.05  // vaccine inefficacy
 #define DELTA (1.0/3.8)   // infection time
 #define KAPPA 0.014 // mortality rate
-#define THETA (1.0/10)    // average days until recovery
+#define THETA (0.1)    // average days until recovery
 #define RHO (1.0/15)      // average days until death
 
 #define MAX_TIME 180
