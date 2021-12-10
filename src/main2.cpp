@@ -21,28 +21,28 @@ double kappa = 0.095;
 double d = 0;
 double l = 0.11;
 
-#define MAX_TIME 180;
+#define MAX_TIME 180
 
 // Model
 struct SEIR {
     Integrator S, E, I, R, D;
 
     SEIR(
-        double lambda,
-        double v,
-        double vr,
-        double omega,
-        double psi,
-        double rho,
-        double kappa,
-        double d,
-        double l
+        double lambda_,
+        double v_,
+        double vr_,
+        double omega_,
+        double psi_,
+        double rho_,
+        double kappa_,
+        double d_,
+        double l_
     ) :
-        S(lambda*N - lambda*v*N + omega*R - psi*((S*I)/N) - vr*S - d*S, S0),
-        E(psi*((S*I)/N) - rho*E - d*E -l*E, E0),
-        I(rho*E - kappa*I - d*I - l*I, I0),
-        R(lambda*v*N + kappa*I - d*R - omega*R + vr*S, R0),
-        D(d*S + d*E + d*I + d*R + l*E + l*I, D0) {}
+        S(lambda_*N - lambda_*v_*N + omega_*R - psi_*((S*I)/N) - vr_*S - d_*S, S0),
+        E(psi_*((S*I)/N) - rho_*E - d_*E -l_*E, E0),
+        I(rho_*E - kappa_*I - d_*I - l_*I, I0),
+        R(lambda_*v_*N + kappa_*I - d_*R - omega_*R + vr_*S, R0),
+        D(d_*S + d_*E + d_*I + d_*R + l_*E + l_*I, D0) {}
 };
 
 // Create model instance

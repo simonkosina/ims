@@ -9,21 +9,21 @@
 #define Q0 1    // quarantined
 #define R0 0    // recovered
 #define D0 0    // dead
-#define V0 0    // vaccinated
+#define V0 (0.6*S0)    // vaccinated
 
 // Model paramters
 #define LAMBDA 2300 // new births and residents per unit of time
-#define BETA 0.00000000858  // transmisson rate
-#define ALPHA 0.00035  // vaccination rate
+#define BETA 0.000000073  // transmisson rate
+#define ALPHA 0.0  // vaccination rate
 #define MU 0.00003    // natural death rate
-#define GAMMA 5.5   // incubation period
+#define GAMMA (1.0/5.5)   // incubation period
 #define SIGMA 0.05  // vaccine inefficacy
-#define DELTA 3.8   // infection time
+#define DELTA (1.0/3.8)   // infection time
 #define KAPPA 0.014 // mortality rate
-#define THETA 10    // average days until recovery
-#define RHO 15      // average days until death
+#define THETA (1.0/10)    // average days until recovery
+#define RHO (1.0/15)      // average days until death
 
-#define MAX_TIME 200
+#define MAX_TIME 180
 
 // Model
 struct SEIR {
@@ -42,26 +42,27 @@ struct SEIR {
         double theta,
         double rho
     ) :
-        S(lambda - beta*S*I - alpha*S - mu*S, S0),
-        E(beta*S*I - gamma*E + sigma*beta*V*I - mu*E, E0),
-        I(gamma*E - delta*I - mu*I, I0),
-        Q(delta*I - (1 - kappa)*theta*Q - kappa*rho*Q - mu*Q, Q0),
-        R((1 - kappa)*theta*Q - mu*R, R0),
-        D(kappa*rho*Q, D0),
-        V(alpha*S - sigma*beta*V*I - mu*V, V0) {}
+        S(lambda - beta*S*I - alpha*S - mu*S, (double) S0),
+        E(beta*S*I - gamma*E + sigma*beta*V*I - mu*E, (double) E0),
+        I(gamma*E - delta*I - mu*I, (double) I0),
+        Q(delta*I - (1 - kappa)*theta*Q - kappa*rho*Q - mu*Q, (double) Q0),
+        R((1 - kappa)*theta*Q - mu*R, (double) R0),
+        D(kappa*rho*Q, (double) D0),
+        V(alpha*S - sigma*beta*V*I - mu*V, (double) V0) {}
 };
 
 // Create model instance
-SEIR seir(LAMBDA, BETA, ALPHA, MU, (1 / (double) GAMMA), SIGMA, (1 / (double) DELTA), KAPPA, (1 / (double) THETA), (1 / (double) RHO));
+SEIR seir(LAMBDA, BETA, ALPHA, MU, GAMMA, SIGMA, DELTA, KAPPA, THETA, RHO);
 
 void Sample() {
     Print("%6.2f,%.5g,%.5g,%.5g,%.5g,%.5g,%.5g,%.5g\n", T.Value(), seir.S.Value(), seir.E.Value(), seir.I.Value(), seir.Q.Value(), seir.R.Value(), seir.D.Value(), seir.V.Value());
 }
 
-Sampler S(Sample, 0.01);        // Output step 
+Sampler S(Sample, 1);        // Output step 
 
 int main() {
     double maxtime = MAX_TIME;
+    printf("%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\n", (double) LAMBDA, ((double) BETA),(double)  ALPHA,(double)  MU,(double)  GAMMA,(double)  SIGMA,(double)  DELTA,(double)  KAPPA,(double)  THETA,(double)  RHO);
     SetOutput("seir.csv");    // Redirect output to file
     Print("time,susceptible,exposed,infectious,quarantined,recovered,dead,vaccinated\n");
     Init(0, maxtime);           // Initialize simulator

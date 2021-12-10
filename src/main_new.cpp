@@ -24,7 +24,7 @@ int exposed_ppl = 0;
 /* function headers */
 void setUpInitialParam(int i);
 
-class People : public Process{
+class People : public Process {
     public:
     unsigned int uid;
 
@@ -113,7 +113,6 @@ void setUpInitialParam(int i){
     //setup by parameters will go through categories and will set uniform age for number of ppl in that category
     if(i+1 < POPULATION*AGE1){
         person->age=round(Uniform(0,17));
-
     }
     else if(i+1 < POPULATION*AGE1 + POPULATION*AGE2){
         person->age=round(Uniform(18,44));
