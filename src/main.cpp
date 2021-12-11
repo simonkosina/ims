@@ -3,8 +3,8 @@
 #include <simlib.h>
 
 // Header with with model parameters
-// #include "cr_2020_no_vaccine.h"
-#include "cr_2021_vaccine.h"
+#include "cr_2020_no_vaccine.h"
+// #include "cr_2021_vaccine.h"
 
 #define MAX_TIME 120
 
