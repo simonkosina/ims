@@ -164,7 +164,21 @@ def plot_2020_no_vaccine():
                     )
 
 
+def calc_mean_cfr(date_start, date_end):
+    """
+    Calculate the mean CFR over a given time period based on the real data.
+    """
+    
+    df = get_real_dataframe()
+    mask = (df["date"] >= pd.to_datetime(date_start)
+            ) & (df["date"] < pd.to_datetime(date_end))
+    dfs = df[mask].copy()
+    dfs["ratio"] = dfs["total_deaths"]/dfs["total_cases"]
+
+    return dfs["ratio"].mean()
+
 if __name__ == "__main__":
+    calc_mean_cfr("2020-aug-01", "2021-jan-01")
     plot_2020_no_vaccine()
     # plot_2021_vaccine()
 # %%
