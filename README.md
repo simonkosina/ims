@@ -6,6 +6,7 @@ Prostudujte současný stav epidemie Covidu. Prostudujte stav očkování v jedn
 
 ## TODO
 - vsade, kde sa prvy krat objavi pojem z predmetu IMS treba odkazat na slide!
+- komentovat vsetky tabulky a grafy
 
 ### 1 Uvod
 - napisat uvod, na ake otazky odpovedame? (skumame vplzv ockovania na zdravie populacie)
@@ -29,7 +30,15 @@ Prostudujte současný stav epidemie Covidu. Prostudujte stav očkování v jedn
 - ukazat mapovanie abstraktneho (konceptualneho) modelu do simulacneho
 
 ### 5 Podstata simulacnych experimentov a ich priebeh
+- nezamenovat pojmy testovanie a experimentovanie
+- zopakovat co presne chceme zistit experimentovanim a preco k tomu treba model
+- zdovodnit chovanie modelu vo vsetkych situaciach
+- 5.1 - naznacit postup experimentovania - akym sposobom dojdeme pomocou experimentov k cielu
+- 5.2 - dokumentacia jednotlivych experimentov
+- 5.3 - zavery experimentu
 
+### 6 Zhrnutie simulacnych experimentov a zaver
+- zhodnotenie simulacnej studie a zhodnotenie experimentov
 
 
 - vytvorit model a simulacia, ktora odpoveda situacii v CR
