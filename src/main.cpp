@@ -3,7 +3,8 @@
 #include <simlib.h>
 
 // Header with with model parameters
-#include "cr_2020_no_vaccine.h"
+// #include "cr_2020_no_vaccine.h"
+#include "cr_2021_vaccine.h"
 
 #define MAX_TIME 120
 
@@ -45,7 +46,7 @@ Sampler S(Sample, 1);        // Output step
 int main() {
     double maxtime = MAX_TIME;
     printf("%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\n", (double) LAMBDA, ((double) BETA),(double)  ALPHA,(double)  MU,(double)  GAMMA,(double)  SIGMA,(double)  DELTA,(double)  KAPPA,(double)  THETA,(double)  RHO);
-    SetOutput("out/cr_2020_no_vaccine.csv");    // Redirect output to file
+    SetOutput(OUT_FILE);    // Redirect output to file
     Print("time,susceptible,exposed,infectious,quarantined,recovered,dead,vaccinated\n");
     Init(0, maxtime);           // Initialize simulator
     SetAccuracy(1e-8);          // Required accuracy

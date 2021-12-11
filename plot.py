@@ -3,7 +3,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-date_start = "2020-08-01"
+# date_start = "2020-08-01" # 2020 no vaccine fall
+date_start = "2021-08-01"  # 2021 vaccine fall
 
 
 def plot_model_output(csv_file, fig_location):
@@ -32,11 +33,14 @@ def plot_model_output(csv_file, fig_location):
     g.get_figure().clf()
 
 
-def plot_comparison(csv_file, fig_location, ref_column, pred_column):
+def plot_comparison(csv_file, fig_location, ref_column, pred_column, ref_offset=0):
     df_pred = pd.read_csv(csv_file)
 
     df_ref = get_real_dataframe()[["date", ref_column]].copy()
     df_ref.columns = ["date", "reference"]
+
+    # offset the value
+    df_ref["reference"] = df_ref["reference"] - ref_offset
 
     # convert floats to intengers
     df_pred.time = df_pred.time.astype(int)
@@ -65,7 +69,7 @@ def plot_comparison(csv_file, fig_location, ref_column, pred_column):
 
     g.get_figure().savefig(fig_location)
     g.get_figure().clf()
-    
+
 
 def get_real_dataframe(csv_file="data/owid-covid-data.csv"):
     df = pd.read_csv(csv_file,
@@ -76,19 +80,48 @@ def get_real_dataframe(csv_file="data/owid-covid-data.csv"):
     df.date = pd.to_datetime(df.date)
     df["date"] = df["date"].dt.strftime('%Y-%m-%d')
     df["date"] = pd.to_datetime(df.date)
-    
+
     return df
 
 
-if __name__ == "__main__":
-    plot_model_output("out/cr_2020_no_vaccine.csv",
-                      "out/cr_2020_no_vaccine.png")
-    plot_comparison(csv_file="out/cr_2020_no_vaccine.csv",
-                    fig_location="out/cr_2020_no_vaccine_cases.png",
+def plot_2021_vaccine():
+    template = "out/cr_2021_{}"
+
+    plot_model_output(template.format("vaccine.csv"),
+                      template.format("vaccine.png"))
+    plot_comparison(csv_file=template.format("vaccine.csv"),
+                    fig_location=template.format("vaccine_cases.png"),
                     ref_column="total_cases",
-                    pred_column="quarantined")
-    plot_comparison(csv_file="out/cr_2020_no_vaccine.csv",
-                    fig_location="out/cr_2020_no_vaccine_deaths.png",
+                    ref_offset=1_680_000,
+                    pred_column="quarantined"
+                    )
+    plot_comparison(csv_file=template.format("vaccine.csv"),
+                    fig_location=template.format("vaccine_deaths.png"),
                     ref_column="total_deaths",
-                    pred_column="dead")
+                    ref_offset=30_369,
+                    pred_column="dead"
+                    )
+
+
+def plot_2020_no_vaccine():
+
+    template = "out/cr_2020_no_{}"
+
+    plot_model_output(template.format("vaccine.csv"),
+                      template.format("vaccine.png"))
+    plot_comparison(csv_file=template.format("vaccine.csv"),
+                    fig_location=template.format("vaccine_cases.png"),
+                    ref_column="total_cases",
+                    pred_column="quarantined"
+                    )
+    plot_comparison(csv_file=template.format("vaccine.csv"),
+                    fig_location=template.format("vaccine_deaths.png"),
+                    ref_column="total_deaths",
+                    pred_column="dead"
+                    )
+
+
+if __name__ == "__main__":
+    # plot_2020_no_vaccine()
+    plot_2021_vaccine()
 # %%
