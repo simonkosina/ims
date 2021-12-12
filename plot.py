@@ -330,7 +330,7 @@ if __name__ == "__main__":
         vals=[40, 50, 60, 70, 80]
         )
     
-    # # Plot experiment 3 results
+    # Plot experiment 3 results
     for e in [53, 63, 73, 83, 93]:
         plot_cases(
             title=f"Prípady vzhľadom na mieru vakcinácie populácie, $\sigma$ = {100-e}%",
