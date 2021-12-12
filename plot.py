@@ -134,28 +134,27 @@ def get_total_deaths(filename, vaccine_effectivity, date_start):
     return df[["date", cases_col]].copy()
 
 
-def plot_effectivity_deaths(fig_location, date_start):
-    filename = "out/ex1_effectivity_{}.csv"
-    df = get_total_deaths(filename, 53, date_start)
+def plot_deaths(title, col, ylabel, filename, fig_location, date_start, vals):
+    df = get_total_deaths(filename, vals[0], date_start)
 
-    for p in [63, 73, 83, 93]:
+    for p in vals[1:]:
         df2 = get_total_deaths(filename, p, date_start)
         df = df.merge(df2, on="date", how="left")
 
-    df = df.melt(id_vars=["date"], var_name="Efektívnosť vakcíny")
+    df = df.melt(id_vars=["date"], var_name=col)
 
     ax = sns.lineplot(
         data=df,
         x="date",
         y="value",
-        hue="Efektívnosť vakcíny"
+        hue=col
     )
 
     ax.grid(visible=False, which='major', axis='x')
-    ax.set_title("Počet úmrtí vzhľadom na efektívnosť vakcíny")
+    ax.set_title(title)
 
     ax.set_ylabel("Celkový počet úmrtí")
-    ax.set_xlabel("Dátum")
+    ax.set_xlabel(ylabel)
 
     ax.xaxis.set_major_formatter(dates.DateFormatter("%d-%b"))
 
@@ -163,88 +162,26 @@ def plot_effectivity_deaths(fig_location, date_start):
     ax.get_figure().savefig(fig_location)
     ax.get_figure().clf()
 
+def plot_cases(title, ylabel, col, filename, fig_location, date_start, vals):
+    df = get_total_cases(filename, vals[0], date_start)
 
-def plot_vaccine_rate_deaths(fig_location, date_start):
-    filename = "out/ex2_vaccination_{}.csv"
-    df = get_total_deaths(filename, 40, date_start)
-
-    for p in [50, 60, 70, 80]:
-        df2 = get_total_deaths(filename, p, date_start)
-        df = df.merge(df2, on="date", how="left")
-
-    df = df.melt(id_vars=["date"], var_name="Miera vakcinácie")
-
-    ax = sns.lineplot(
-        data=df,
-        x="date",
-        y="value",
-        hue="Miera vakcinácie"
-    )
-
-    ax.grid(visible=False, which='major', axis='x')
-    ax.set_title("Počet úmrtí vzhľadom na mieru vakcinácie populácie")
-
-    ax.set_ylabel("Celkový počet úmrtí")
-    ax.set_xlabel("Dátum")
-
-    ax.xaxis.set_major_formatter(dates.DateFormatter("%d-%b"))
-
-    ax.get_figure().tight_layout()
-    ax.get_figure().savefig(fig_location)
-    ax.get_figure().clf()
-
-
-def plot_vaccine_rate_cases(fig_location, date_start):
-    filename = "out/ex2_vaccination_{}.csv"
-    df = get_total_cases(filename, 40, date_start)
-
-    for p in [50, 60, 70, 80]:
+    for p in vals[1:]:
         df2 = get_total_cases(filename, p, date_start)
         df = df.merge(df2, on="date", how="left")
 
-    df = df.melt(id_vars=["date"], var_name="Miera vakcinácie")
+    df = df.melt(id_vars=["date"], var_name=col)
 
     ax = sns.lineplot(
         data=df,
         x="date",
         y="value",
-        hue="Miera vakcinácie"
+        hue=col
     )
 
     ax.grid(visible=False, which='major', axis='x')
-    ax.set_title("Počet prípadov vzhľadom na mieru vakcinácie populácie")
+    ax.set_title(title)
 
-    ax.set_ylabel("Celkový počet prípadov")
-    ax.set_xlabel("Dátum")
-
-    ax.xaxis.set_major_formatter(dates.DateFormatter("%d-%b"))
-
-    ax.get_figure().tight_layout()
-    ax.get_figure().savefig(fig_location)
-    ax.get_figure().clf()
-
-
-def plot_effectivity_cases(fig_location, date_start):
-    filename = "out/ex1_effectivity_{}.csv"
-    df = get_total_cases(filename, 53, date_start)
-
-    for p in [63, 73, 83, 93]:
-        df2 = get_total_cases(filename, p, date_start)
-        df = df.merge(df2, on="date", how="left")
-
-    df = df.melt(id_vars=["date"], var_name="Efektívnosť vakcíny")
-
-    ax = sns.lineplot(
-        data=df,
-        x="date",
-        y="value",
-        hue="Efektívnosť vakcíny"
-    )
-
-    ax.grid(visible=False, which='major', axis='x')
-    ax.set_title("Počet prípadov vzhľadom na efektívnosť vakcíny")
-
-    ax.set_ylabel("Celkový počet prípadov")
+    ax.set_ylabel(ylabel)
     ax.set_xlabel("Dátum")
 
     ax.xaxis.set_major_formatter(dates.DateFormatter("%d-%b"))
@@ -348,9 +285,72 @@ if __name__ == "__main__":
     # calc_mean_cfr("2020-aug-01", "2021-dec-01")
     plot_2020_no_vaccine()
     plot_2021_vaccine()
-    plot_vaccine_rate_cases("img/ex2_cases.png", "2021-sep-01")
-    plot_vaccine_rate_deaths("img/ex2_deaths.png", "2021-sep-01")
-    plot_effectivity_cases("img/ex1_cases.png", "2021-sep-01")
-    plot_effectivity_deaths("img/ex1_deaths.png", "2021-sep-01")
+    
+    # Plot experiment 1 results
+    plot_cases(
+        title="Počet prípadov vzhľadom na efektívnosť vakcíny",
+        col="Miera vakcinácie",
+        ylabel="Celkový počet prípadov",
+        filename="out/ex1_effectivity_{}.csv", 
+        fig_location="img/ex1_cases.png",
+        date_start="2021-sep-01",
+        vals = [53, 63, 73, 83, 93]
+        )
+    
+    
+    plot_deaths(
+        title="Počet úmrtí vzhľadom na efektívnosť vakcíny",
+        col="Miera vakcinácie",
+        ylabel="Celkový počet úmrtí",
+        filename="out/ex1_effectivity_{}.csv",
+        fig_location="img/ex1_deaths.png", 
+        date_start="2021-sep-01",
+        vals=[53, 63, 73, 83, 93]
+        )
+    
+    
+    # Plot experiment 2 results
+    plot_cases(
+        title="Počet prípadov vzhľadom na mieru vakcinácie populácie",
+        filename="out/ex2_vaccination_{}.csv",
+        fig_location="img/ex2_cases.png",
+        col="Efektívnosť vakcín",
+        ylabel="Celkový počet prípadov",
+        date_start="2021-sep-01",
+        vals=[40, 50, 60, 70, 80]
+        )
+    
+    plot_deaths(
+        title="Počet úmrtí vzhľadom na mieru vakcinácie populácie",
+        col="Efektívnosť vakcín",
+        ylabel="Celkový počet úmrtí",
+        filename="out/ex2_vaccination_{}.csv",
+        fig_location="img/ex2_deaths.png",
+        date_start="2021-sep-01",
+        vals=[40, 50, 60, 70, 80]
+        )
+    
+    # # Plot experiment 3 results
+    for e in [53, 63, 73, 83, 93]:
+        plot_cases(
+            title=f"Prípady vzhľadom na mieru vakcinácie populácie, $\sigma$ = {100-e}%",
+            col="Miera zaočkovania",
+            ylabel="Celkový počet prípadov",
+            filename=f"out/ex3_e_{e}" + "_v_{}.csv",
+            fig_location=f"img/ex3_e_{e}_cases.png",
+            date_start="2021-sep-01",
+            vals=[40, 50, 60, 70, 80]
+        )
+        
+        plot_deaths(
+            title=f"Úmrtia vzhľadom na mieru vakcinácie populácie, $\sigma$ = {100-e}%",
+            col="Miera zaočkovania",
+            ylabel="Celkový počet úmrtí",
+            filename=f"out/ex3_e_{e}" + "_v_{}.csv",
+            fig_location=f"img/ex3_e_{e}_deaths.png",
+            date_start="2021-sep-01",
+            vals=[40, 50, 60, 70, 80]
+        )
+
     ...
 # %%
