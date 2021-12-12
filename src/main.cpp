@@ -5,16 +5,48 @@
 // Header with with model parameters
 // #include "cr_2020_no_vaccine.h"
 // #include "cr_2021_vaccine.h"
-// #include "ex1_effectivity_93.h"
-// #include "ex1_effectivity_83.h"
-// #include "ex1_effectivity_73.h"
-// #include "ex1_effectivity_63.h"
-// #include "ex1_effectivity_73.h"
-#include "ex2_vaccination_40.h"
-// #include "ex2_vaccination_50.h"
-// #include "ex2_vaccination_60.h"
-// #include "ex2_vaccination_70.h"
-// #include "ex2_vaccination_80.h"
+
+// #include "ex1/ex1_effectivity_93.h"
+// #include "ex1/ex1_effectivity_83.h"
+// #include "ex1/ex1_effectivity_73.h"
+// #include "ex1/ex1_effectivity_63.h"
+// #include "ex1/ex1_effectivity_73.h"
+
+// #include "ex2/ex2_vaccination_40.h"
+// #include "ex2/ex2_vaccination_50.h"
+// #include "ex2/ex2_vaccination_60.h"
+// #include "ex2/ex2_vaccination_70.h"
+// #include "ex2/ex2_vaccination_80.h"
+
+// #include "ex3/ex3_e_53_v_40.h"
+// #include "ex3/ex3_e_53_v_50.h"
+// #include "ex3/ex3_e_53_v_60.h"
+// #include "ex3/ex3_e_53_v_70.h"
+// #include "ex3/ex3_e_53_v_80.h"
+
+// #include "ex3/ex3_e_63_v_40.h"
+// #include "ex3/ex3_e_63_v_50.h"
+// #include "ex3/ex3_e_63_v_60.h"
+// #include "ex3/ex3_e_63_v_70.h"
+// #include "ex3/ex3_e_63_v_80.h"
+
+// #include "ex3/ex3_e_73_v_40.h"
+// #include "ex3/ex3_e_73_v_50.h"
+// #include "ex3/ex3_e_73_v_60.h"
+// #include "ex3/ex3_e_73_v_70.h"
+// #include "ex3/ex3_e_73_v_80.h"
+
+// #include "ex3/ex3_e_83_v_40.h"
+// #include "ex3/ex3_e_83_v_50.h"
+// #include "ex3/ex3_e_83_v_60.h"
+// #include "ex3/ex3_e_83_v_70.h"
+// #include "ex3/ex3_e_83_v_80.h"
+
+// #include "ex3/ex3_e_93_v_40.h"
+// #include "ex3/ex3_e_93_v_50.h"
+// #include "ex3/ex3_e_93_v_60.h"
+// #include "ex3/ex3_e_93_v_70.h"
+// #include "ex3/ex3_e_93_v_80.h"
 
 // Model
 struct SEIR {

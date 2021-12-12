@@ -153,8 +153,8 @@ def plot_deaths(title, col, ylabel, filename, fig_location, date_start, vals):
     ax.grid(visible=False, which='major', axis='x')
     ax.set_title(title)
 
-    ax.set_ylabel("Celkový počet úmrtí")
-    ax.set_xlabel(ylabel)
+    ax.set_ylabel(ylabel)
+    ax.set_xlabel("Dátum")
 
     ax.xaxis.set_major_formatter(dates.DateFormatter("%d-%b"))
 
@@ -217,7 +217,7 @@ def plot_2021_vaccine():
     plot_comparison(csv_file=template.format("out", "vaccine.csv"),
                     fig_location=template.format("img", "vaccine_cases.png"),
                     ref_column="total_cases",
-                    ref_offset=1_647_761,
+                    ref_offset=1_679_476,
                     pred_column="quarantined",
                     date_start=date_start,
                     title="Prípady - jeseň 2021",
@@ -227,7 +227,7 @@ def plot_2021_vaccine():
     plot_comparison(csv_file=template.format("out", "vaccine.csv"),
                     fig_location=template.format("img", "vaccine_deaths.png"),
                     ref_column="total_deaths",
-                    ref_offset=30_483,
+                    ref_offset=30_404,
                     pred_column="dead",
                     date_start=date_start,
                     title="Úmrtia - jeseň 2021",
