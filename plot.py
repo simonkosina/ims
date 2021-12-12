@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 
 from matplotlib import dates
 
+
 def plot_model_output(csv_file, fig_location, date_start, title, ylabel):
     df = pd.read_csv(csv_file)
 
@@ -19,7 +20,7 @@ def plot_model_output(csv_file, fig_location, date_start, title, ylabel):
                   value_vars=["susceptible", "exposed", "infectious",
                               "quarantined", "recovered", "dead", "vaccinated"],
                   var_name="Trieda")
-    
+
     dfm["Trieda"] = dfm["Trieda"].map(lambda x: x.upper()[0])
 
     ax = sns.lineplot(
@@ -28,15 +29,15 @@ def plot_model_output(csv_file, fig_location, date_start, title, ylabel):
         y="value",
         hue="Trieda"
     )
-    
-    ax.grid(visible=False, which='major', axis='x')    
+
+    ax.grid(visible=False, which='major', axis='x')
     ax.set_title(title)
 
     ax.set_ylabel(ylabel)
     ax.set_xlabel("Dátum")
 
     ax.xaxis.set_major_formatter(dates.DateFormatter("%d-%b"))
-    
+
     ax.get_figure().tight_layout()
     ax.get_figure().savefig(fig_location)
     ax.get_figure().clf()
@@ -46,10 +47,9 @@ def plot_comparison(csv_file, fig_location, ref_column, pred_column, date_start,
     df_pred = pd.read_csv(csv_file)
 
     ref_col = "Dáta" if ref_offset == 0 else f"Dáta - {ref_offset}"
-    
+
     df_ref = get_real_dataframe()[["date", ref_column]].copy()
     df_ref.columns = ["date", ref_col]
-
 
     # offset the value
     df_ref[ref_col] = df_ref[ref_col] - ref_offset
@@ -94,36 +94,146 @@ def plot_comparison(csv_file, fig_location, ref_column, pred_column, date_start,
     ax.get_figure().clf()
 
 
-def get_effectivity_total_cases(vaccine_effectivity, date_start):
+def get_total_cases(filename, vaccine_effectivity, date_start):
     """
     Get a dataframe with total cases for the given vaccine efficacy.
     """
-    
-    filename = f"out/ex1_effectivity_{vaccine_effectivity}.csv"
+
+    filename = filename.format(vaccine_effectivity)
     cases_col = f"{vaccine_effectivity}%"
 
     df = pd.read_csv(filename, usecols=["time", "quarantined"])
-    
+
     df["time"] = df["time"].astype(int)
     df["date"] = pd.to_datetime(date_start)
     df.date = df.date + pd.to_timedelta(df.time, "D")
     df["diff"] = df["quarantined"].diff()
     df["diff"] = df["diff"].mask(df["diff"] < 0, 0)
     df[cases_col] = df["diff"].cumsum()
-    
+
     return df[["date", cases_col]].copy()
-    
 
-def plot_effectivity(fig_location, date_start):
-    df = get_effectivity_total_cases(53, date_start)
 
+def get_total_deaths(filename, vaccine_effectivity, date_start):
+    """
+    Get a dataframe with total cases for the given vaccine efficacy.
+    """
+
+    filename = filename.format(vaccine_effectivity)
+    cases_col = f"{vaccine_effectivity}%"
+
+    df = pd.read_csv(filename, usecols=["time", "dead"])
+
+    df["time"] = df["time"].astype(int)
+    df["date"] = pd.to_datetime(date_start)
+    df.date = df.date + pd.to_timedelta(df.time, "D")
+    df["diff"] = df["dead"].diff()
+    df["diff"] = df["diff"].mask(df["diff"] < 0, 0)
+    df[cases_col] = df["diff"].cumsum()
+
+    return df[["date", cases_col]].copy()
+
+
+def plot_effectivity_deaths(fig_location, date_start):
+    filename = "out/ex1_effectivity_{}.csv"
+    df = get_total_deaths(filename, 53, date_start)
 
     for p in [63, 73, 83, 93]:
-        df2 = get_effectivity_total_cases(p, date_start)
+        df2 = get_total_deaths(filename, p, date_start)
         df = df.merge(df2, on="date", how="left")
-        
+
     df = df.melt(id_vars=["date"], var_name="Efektívnosť vakcíny")
-    
+
+    ax = sns.lineplot(
+        data=df,
+        x="date",
+        y="value",
+        hue="Efektívnosť vakcíny"
+    )
+
+    ax.grid(visible=False, which='major', axis='x')
+    ax.set_title("Počet úmrtí vzhľadom na efektívnosť vakcíny")
+
+    ax.set_ylabel("Celkový počet úmrtí")
+    ax.set_xlabel("Dátum")
+
+    ax.xaxis.set_major_formatter(dates.DateFormatter("%d-%b"))
+
+    ax.get_figure().tight_layout()
+    ax.get_figure().savefig(fig_location)
+    ax.get_figure().clf()
+
+
+def plot_vaccine_rate_deaths(fig_location, date_start):
+    filename = "out/ex2_vaccination_{}.csv"
+    df = get_total_deaths(filename, 40, date_start)
+
+    for p in [50, 60, 70, 80]:
+        df2 = get_total_deaths(filename, p, date_start)
+        df = df.merge(df2, on="date", how="left")
+
+    df = df.melt(id_vars=["date"], var_name="Miera vakcinácie")
+
+    ax = sns.lineplot(
+        data=df,
+        x="date",
+        y="value",
+        hue="Miera vakcinácie"
+    )
+
+    ax.grid(visible=False, which='major', axis='x')
+    ax.set_title("Počet úmrtí vzhľadom na mieru vakcinácie populácie")
+
+    ax.set_ylabel("Celkový počet úmrtí")
+    ax.set_xlabel("Dátum")
+
+    ax.xaxis.set_major_formatter(dates.DateFormatter("%d-%b"))
+
+    ax.get_figure().tight_layout()
+    ax.get_figure().savefig(fig_location)
+    ax.get_figure().clf()
+
+
+def plot_vaccine_rate_cases(fig_location, date_start):
+    filename = "out/ex2_vaccination_{}.csv"
+    df = get_total_cases(filename, 40, date_start)
+
+    for p in [50, 60, 70, 80]:
+        df2 = get_total_cases(filename, p, date_start)
+        df = df.merge(df2, on="date", how="left")
+
+    df = df.melt(id_vars=["date"], var_name="Miera vakcinácie")
+
+    ax = sns.lineplot(
+        data=df,
+        x="date",
+        y="value",
+        hue="Miera vakcinácie"
+    )
+
+    ax.grid(visible=False, which='major', axis='x')
+    ax.set_title("Počet prípadov vzhľadom na mieru vakcinácie populácie")
+
+    ax.set_ylabel("Celkový počet prípadov")
+    ax.set_xlabel("Dátum")
+
+    ax.xaxis.set_major_formatter(dates.DateFormatter("%d-%b"))
+
+    ax.get_figure().tight_layout()
+    ax.get_figure().savefig(fig_location)
+    ax.get_figure().clf()
+
+
+def plot_effectivity_cases(fig_location, date_start):
+    filename = "out/ex1_effectivity_{}.csv"
+    df = get_total_cases(filename, 53, date_start)
+
+    for p in [63, 73, 83, 93]:
+        df2 = get_total_cases(filename, p, date_start)
+        df = df.merge(df2, on="date", how="left")
+
+    df = df.melt(id_vars=["date"], var_name="Efektívnosť vakcíny")
+
     ax = sns.lineplot(
         data=df,
         x="date",
@@ -142,7 +252,8 @@ def plot_effectivity(fig_location, date_start):
     ax.get_figure().tight_layout()
     ax.get_figure().savefig(fig_location)
     ax.get_figure().clf()
-    
+
+
 def get_real_dataframe(csv_file="data/owid-covid-data.csv"):
     df = pd.read_csv(csv_file,
                      usecols=["iso_code", "date", "total_cases", "total_deaths"])
@@ -155,18 +266,19 @@ def get_real_dataframe(csv_file="data/owid-covid-data.csv"):
 
     return df
 
+
 def plot_2021_vaccine():
-    template = "out/cr_2021_{}"
+    template = "{}/cr_2021_{}"
     date_start = "2021-09-01"
 
-    plot_model_output(csv_file=template.format("vaccine.csv"),
-                      fig_location=template.format("vaccine.png"),
+    plot_model_output(csv_file=template.format("out", "vaccine.csv"),
+                      fig_location=template.format("img", "vaccine.png"),
                       ylabel="Počet prípadov",
                       title="Model - jeseň 2021",
                       date_start=date_start)
 
-    plot_comparison(csv_file=template.format("vaccine.csv"),
-                    fig_location=template.format("vaccine_cases.png"),
+    plot_comparison(csv_file=template.format("out", "vaccine.csv"),
+                    fig_location=template.format("img", "vaccine_cases.png"),
                     ref_column="total_cases",
                     ref_offset=1_647_761,
                     pred_column="quarantined",
@@ -175,8 +287,8 @@ def plot_2021_vaccine():
                     ylabel="Celkový počet prípadov"
                     )
 
-    plot_comparison(csv_file=template.format("vaccine.csv"),
-                    fig_location=template.format("vaccine_deaths.png"),
+    plot_comparison(csv_file=template.format("out", "vaccine.csv"),
+                    fig_location=template.format("img", "vaccine_deaths.png"),
                     ref_column="total_deaths",
                     ref_offset=30_483,
                     pred_column="dead",
@@ -188,27 +300,27 @@ def plot_2021_vaccine():
 
 def plot_2020_no_vaccine():
 
-    template = "out/cr_2020_no_{}"
+    template = "{}/cr_2020_no_{}"
     date_start = "2020-08-01"
 
-    plot_model_output(template.format("vaccine.csv"),
-                      template.format("vaccine.png"),
+    plot_model_output(template.format("out", "vaccine.csv"),
+                      template.format("img", "vaccine.png"),
                       date_start=date_start,
                       ylabel="Počet prípadov",
                       title="Model - jeseň 2020",
                       )
-    
-    plot_comparison(csv_file=template.format("vaccine.csv"),
-                    fig_location=template.format("vaccine_cases.png"),
+
+    plot_comparison(csv_file=template.format("out", "vaccine.csv"),
+                    fig_location=template.format("img", "vaccine_cases.png"),
                     ref_column="total_cases",
                     pred_column="quarantined",
                     date_start=date_start,
                     title="Prípady - jeseň 2020",
                     ylabel="Celkový počet prípadov"
                     )
-    
-    plot_comparison(csv_file=template.format("vaccine.csv"),
-                    fig_location=template.format("vaccine_deaths.png"),
+
+    plot_comparison(csv_file=template.format("out", "vaccine.csv"),
+                    fig_location=template.format("img", "vaccine_deaths.png"),
                     ref_column="total_deaths",
                     pred_column="dead",
                     date_start=date_start,
@@ -221,7 +333,7 @@ def calc_mean_cfr(date_start, date_end):
     """
     Calculate the mean CFR over a given time period based on the real data.
     """
-    
+
     df = get_real_dataframe()
     mask = (df["date"] >= pd.to_datetime(date_start)
             ) & (df["date"] < pd.to_datetime(date_end))
@@ -230,9 +342,15 @@ def calc_mean_cfr(date_start, date_end):
 
     return dfs["ratio"].mean()
 
+
 if __name__ == "__main__":
+    sns.set_style("whitegrid")
     # calc_mean_cfr("2020-aug-01", "2021-dec-01")
-    # plot_2020_no_vaccine()
-    # plot_2021_vaccine()
+    plot_2020_no_vaccine()
+    plot_2021_vaccine()
+    plot_vaccine_rate_cases("img/ex2_cases.png", "2021-sep-01")
+    plot_vaccine_rate_deaths("img/ex2_deaths.png", "2021-sep-01")
+    plot_effectivity_cases("img/ex1_cases.png", "2021-sep-01")
+    plot_effectivity_deaths("img/ex1_deaths.png", "2021-sep-01")
     ...
 # %%

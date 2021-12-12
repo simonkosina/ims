@@ -3,13 +3,18 @@
 #include <simlib.h>
 
 // Header with with model parameters
-#include "cr_2020_no_vaccine.h"
+// #include "cr_2020_no_vaccine.h"
 // #include "cr_2021_vaccine.h"
 // #include "ex1_effectivity_93.h"
 // #include "ex1_effectivity_83.h"
 // #include "ex1_effectivity_73.h"
 // #include "ex1_effectivity_63.h"
 // #include "ex1_effectivity_73.h"
+#include "ex2_vaccination_40.h"
+// #include "ex2_vaccination_50.h"
+// #include "ex2_vaccination_60.h"
+// #include "ex2_vaccination_70.h"
+// #include "ex2_vaccination_80.h"
 
 // Model
 struct SEIR {
