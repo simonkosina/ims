@@ -1,8 +1,8 @@
-#ifndef CR_2021_VACCINE
+#ifndef MODEL_PARAMS_H
 
-#define CR_2021_VACCINE
+#define MODEL_PARAMS_H
 
-#define OUT_FILE "out/cr_2021_vaccine.csv"
+#define OUT_FILE "out/ex1_effectivity_53.csv"
 
 #define LR ((double) 0.4)
 
@@ -21,12 +21,12 @@
 #define ALPHA 0.001  // vaccination rate
 #define MU 0.0000396    // natural death rate
 #define GAMMA (1.0/5.5)   // incubation period
-#define SIGMA 0.27  // vaccine inefficacy
+#define SIGMA 0.47  // vaccine inefficacy
 #define DELTA (1.0/3.8)   // infection time
 #define KAPPA 0.0035 // mortality rate
 #define THETA (0.10)    // average days until recovery
 #define RHO (1.0/15)      // average days until death
 
-#define MAX_TIME 100
+#define MAX_TIME 120
 
 #endif

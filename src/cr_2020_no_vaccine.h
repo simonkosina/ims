@@ -5,9 +5,9 @@
 #define OUT_FILE "out/cr_2020_no_vaccine.csv"
 
 // Initial values
-#define E0 9000    // exposed (infected, but not yet infectious)
-#define I0 9000   // infectious
-#define Q0 3000    // quarantined
+#define E0 8973    // exposed (infected, but not yet infectious)
+#define I0 8973   // infectious
+#define Q0 2991    // quarantined
 #define R0 13338    // recovered
 #define D0 382    // dead
 #define V0 0   // vaccinated
@@ -24,5 +24,7 @@
 #define KAPPA 0.005 // mortality rate
 #define THETA (0.10)    // average days until recovery
 #define RHO (1.0/15)      // average days until death
+
+#define MAX_TIME 120
 
 #endif

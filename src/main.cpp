@@ -5,8 +5,11 @@
 // Header with with model parameters
 #include "cr_2020_no_vaccine.h"
 // #include "cr_2021_vaccine.h"
-
-#define MAX_TIME 120
+// #include "ex1_effectivity_93.h"
+// #include "ex1_effectivity_83.h"
+// #include "ex1_effectivity_73.h"
+// #include "ex1_effectivity_63.h"
+// #include "ex1_effectivity_73.h"
 
 // Model
 struct SEIR {

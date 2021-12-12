@@ -1,8 +1,8 @@
-#ifndef CR_2021_VACCINE
+#ifndef MODEL_PARAMS_H
 
-#define CR_2021_VACCINE
+#define MODEL_PARAMS_H
 
-#define OUT_FILE "out/cr_2021_vaccine.csv"
+#define OUT_FILE "out/ex1_effectivity_73.csv"
 
 #define LR ((double) 0.4)
 
@@ -27,6 +27,6 @@
 #define THETA (0.10)    // average days until recovery
 #define RHO (1.0/15)      // average days until death
 
-#define MAX_TIME 100
+#define MAX_TIME 120
 
 #endif

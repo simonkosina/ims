@@ -44,11 +44,14 @@ def plot_model_output(csv_file, fig_location, date_start, title, ylabel):
 def plot_comparison(csv_file, fig_location, ref_column, pred_column, date_start, title, ylabel, ref_offset=0):
     df_pred = pd.read_csv(csv_file)
 
+    ref_col = "Dáta" if ref_offset == 0 else f"Dáta - {ref_offset}"
+    
     df_ref = get_real_dataframe()[["date", ref_column]].copy()
-    df_ref.columns = ["date", "Dáta"]
+    df_ref.columns = ["date", ref_col]
+
 
     # offset the value
-    df_ref["Dáta"] = df_ref["Dáta"] - ref_offset
+    df_ref[ref_col] = df_ref[ref_col] - ref_offset
 
     # convert floats to intengers
     df_pred.time = df_pred.time.astype(int)
@@ -64,7 +67,7 @@ def plot_comparison(csv_file, fig_location, ref_column, pred_column, date_start,
 
     df_cmp = df_pred.merge(df_ref, on="date", how="left")
     df_cmp = df_cmp.melt(id_vars=["date"],
-                         value_vars=["Model", "Dáta"],
+                         value_vars=["Model", ref_col],
                          var_name="type")
 
     ax = sns.lineplot(
@@ -90,6 +93,29 @@ def plot_comparison(csv_file, fig_location, ref_column, pred_column, date_start,
     ax.get_figure().clf()
 
 
+def get_effectivity_total_cases(vaccine_effectivity, date_start):
+    """
+    Get a dataframe with total cases for the given vaccine efficacy.
+    """
+    
+    filename = f"out/ex1_effectivity_{vaccine_effectivity}.csv"
+    cases_col = f"{vaccine_effectivity}%"
+
+    df = pd.read_csv(filename, usecols=["time", "quarantined"])
+    
+    df["time"] = df["time"].astype(int)
+    df["date"] = pd.to_datetime(date_start)
+    df.date = df.date + pd.to_timedelta(df.time, "D")
+    df["diff"] = df["quarantined"].diff()
+    df["diff"] = df["diff"].mask(df["diff"] < 0, 0)
+    df[cases_col] = df["diff"].cumsum()
+    
+    return df.copy[["date", cases_col]]
+    
+
+def plot_effectivity(fig_location, date_start):
+    ...
+    
 def get_real_dataframe(csv_file="data/owid-covid-data.csv"):
     df = pd.read_csv(csv_file,
                      usecols=["iso_code", "date", "total_cases", "total_deaths"])
@@ -102,10 +128,9 @@ def get_real_dataframe(csv_file="data/owid-covid-data.csv"):
 
     return df
 
-
 def plot_2021_vaccine():
     template = "out/cr_2021_{}"
-    date_start = "2021-08-01"
+    date_start = "2021-09-01"
 
     plot_model_output(csv_file=template.format("vaccine.csv"),
                       fig_location=template.format("vaccine.png"),
@@ -116,7 +141,7 @@ def plot_2021_vaccine():
     plot_comparison(csv_file=template.format("vaccine.csv"),
                     fig_location=template.format("vaccine_cases.png"),
                     ref_column="total_cases",
-                    ref_offset=1_680_000,
+                    ref_offset=1_647_761,
                     pred_column="quarantined",
                     date_start=date_start,
                     title="Prípady - jeseň 2021",
@@ -126,7 +151,7 @@ def plot_2021_vaccine():
     plot_comparison(csv_file=template.format("vaccine.csv"),
                     fig_location=template.format("vaccine_deaths.png"),
                     ref_column="total_deaths",
-                    ref_offset=30_369,
+                    ref_offset=30_483,
                     pred_column="dead",
                     date_start=date_start,
                     title="Úmrtia - jeseň 2021",
@@ -154,6 +179,7 @@ def plot_2020_no_vaccine():
                     title="Prípady - jeseň 2020",
                     ylabel="Celkový počet prípadov"
                     )
+    
     plot_comparison(csv_file=template.format("vaccine.csv"),
                     fig_location=template.format("vaccine_deaths.png"),
                     ref_column="total_deaths",
@@ -178,7 +204,8 @@ def calc_mean_cfr(date_start, date_end):
     return dfs["ratio"].mean()
 
 if __name__ == "__main__":
-    calc_mean_cfr("2020-aug-01", "2021-jan-01")
-    plot_2020_no_vaccine()
+    # calc_mean_cfr("2020-aug-01", "2021-dec-01")
+    # plot_2020_no_vaccine()
     # plot_2021_vaccine()
+    ...
 # %%
