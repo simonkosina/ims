@@ -28,7 +28,8 @@ def plot_model_output(csv_file, fig_location, date_start, title, ylabel):
         y="value",
         hue="Trieda"
     )
-
+    
+    ax.grid(visible=False, which='major', axis='x')    
     ax.set_title(title)
 
     ax.set_ylabel(ylabel)
@@ -78,7 +79,7 @@ def plot_comparison(csv_file, fig_location, ref_column, pred_column, date_start,
         hue="type"
     )
 
-
+    ax.grid(visible=False, which='major', axis='x')
     ax.get_legend().set_title(None)
 
     ax.set_title(title)
@@ -110,11 +111,37 @@ def get_effectivity_total_cases(vaccine_effectivity, date_start):
     df["diff"] = df["diff"].mask(df["diff"] < 0, 0)
     df[cases_col] = df["diff"].cumsum()
     
-    return df.copy[["date", cases_col]]
+    return df[["date", cases_col]].copy()
     
 
 def plot_effectivity(fig_location, date_start):
-    ...
+    df = get_effectivity_total_cases(53, date_start)
+
+
+    for p in [63, 73, 83, 93]:
+        df2 = get_effectivity_total_cases(p, date_start)
+        df = df.merge(df2, on="date", how="left")
+        
+    df = df.melt(id_vars=["date"], var_name="Efektívnosť vakcíny")
+    
+    ax = sns.lineplot(
+        data=df,
+        x="date",
+        y="value",
+        hue="Efektívnosť vakcíny"
+    )
+
+    ax.grid(visible=False, which='major', axis='x')
+    ax.set_title("Počet prípadov vzhľadom na efektívnosť vakcíny")
+
+    ax.set_ylabel("Celkový počet prípadov")
+    ax.set_xlabel("Dátum")
+
+    ax.xaxis.set_major_formatter(dates.DateFormatter("%d-%b"))
+
+    ax.get_figure().tight_layout()
+    ax.get_figure().savefig(fig_location)
+    ax.get_figure().clf()
     
 def get_real_dataframe(csv_file="data/owid-covid-data.csv"):
     df = pd.read_csv(csv_file,
