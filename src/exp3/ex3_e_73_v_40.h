@@ -2,9 +2,9 @@
 
 #define CR_2021_VACCINE
 
-#define OUT_FILE "out/ex2_vaccination_40.csv"
+#define OUT_FILE "out/ex3_e_73_v_40.csv"
 
-#define LR ((double) 0.4)
+#define LR ((double) 0.40)
 
 // Initial values
 #define N0 10702942 // total population
